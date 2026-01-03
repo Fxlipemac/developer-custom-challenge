@@ -27,4 +27,14 @@ trigger ContractRelationshipTrigger on ContractRelationship__c(
 
     existingRelationshipsMap.put(key, keyrecords);
   }
+
+  for (ContractRelationship__c verifyrecords : Trigger.new) {
+    if (verifyrecords.Contract__c != null && verifyrecords.Contact__c != null) {
+      String key = verifyrecords.Contract__c + '' + verifyrecords.Contact__c;
+      if (existingRelationshipsMap.containsKey(key)) {
+        verifyrecords.addError('Este relacionamento já existe.');
+      }
+    }
+  }
+
 }
