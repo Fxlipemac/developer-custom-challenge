@@ -1,0 +1,244 @@
+<template>
+  <lightning-card
+    title="Gerenciamento de Papéis do Contrato"
+    icon-name="standard:contract"
+  >
+    <div class="slds-m-bottom_medium slds-align_absolute-center" slot="actions">
+      <lightning-button
+        label="Adicionar Contato"
+        icon-name="utility:add"
+        variant="brand"
+        onclick={openModal}
+      >
+      </lightning-button>
+    </div>
+
+    <template if:true={isModalOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        class="slds-modal slds-fade-in-open slds-modal_small"
+      >
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <button
+              class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+              title="Close"
+              onclick={closeModal}
+            >
+              <lightning-icon
+                icon-name="utility:close"
+                alternative-text="close"
+                variant="inverse"
+                size="small"
+              ></lightning-icon>
+            </button>
+            <h2 class="slds-text-heading_medium slds-hyphenate">
+              Adicionar Novo Contato
+            </h2>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <lightning-record-edit-form
+              object-api-name="ContractRelationship__c"
+              onsuccess={handleSuccess}
+            >
+              <lightning-input-field
+                field-name="Contact__c"
+              ></lightning-input-field>
+              <lightning-input-field
+                field-name="Contract__c"
+                value={recordId}
+                class="slds-hide"
+              ></lightning-input-field>
+              <div class="slds-m-top_medium slds-align_absolute-center">
+                <lightning-button
+                  variant="brand"
+                  type="submit"
+                  label="Salvar Vínculo"
+                ></lightning-button>
+                <lightning-button
+                  label="Cancelar"
+                  onclick={closeModal}
+                  class="slds-m-left_small"
+                ></lightning-button>
+              </div>
+            </lightning-record-edit-form>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <div class="slds-p-around_medium">
+      <lightning-layout multiple-rows>
+        <lightning-layout-item size="4" padding="around-small">
+          <div class="slds-box slds-theme_default slds-theme_alert-texture">
+            <h2
+              class="slds-text-heading_medium slds-align_absolute-center slds-m-bottom_medium"
+            >
+              Sem Papel 📂
+            </h2>
+            <template for:each={noRoleContacts} for:item="contact">
+              <div
+                key={contact.Id}
+                class="slds-card slds-p-around_small slds-m-bottom_small"
+              >
+                <div class="slds-media">
+                  <div class="slds-media__figure">
+                    <lightning-icon
+                      icon-name="standard:contact"
+                      size="small"
+                    ></lightning-icon>
+                  </div>
+                  <div class="slds-media__body">
+                    <div class="slds-text-heading_small slds-truncate">
+                      <strong>{contact.Contact__r.Name}</strong>
+                    </div>
+                    <div
+                      class="slds-text-body_small slds-truncate"
+                      title={contact.Contact__r.Email}
+                    >
+                      {contact.Contact__r.Email}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slds-m-top_small slds-grid slds-grid_align-spread">
+                  <lightning-button
+                    label="Comercial"
+                    variant="neutral"
+                    class="slds-size_1-of-2 slds-p-right_xx-small"
+                    onclick={handleMoveToCommercial}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                  <lightning-button
+                    label="Financeiro"
+                    variant="neutral"
+                    class="slds-size_1-of-2 slds-p-left_xx-small"
+                    onclick={handleMoveToFinancial}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                </div>
+                <div class="slds-m-top_xx-small">
+                  <lightning-button
+                    label="Remover"
+                    variant="destructive-text"
+                    class="slds-size_1-of-1"
+                    onclick={handleDelete}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="4" padding="around-small">
+          <div class="slds-box slds-theme_shade">
+            <h2
+              class="slds-text-heading_medium slds-align_absolute-center slds-m-bottom_medium"
+            >
+              Comercial 💼
+            </h2>
+            <template for:each={commercialContacts} for:item="contact">
+              <div
+                key={contact.Id}
+                class="slds-card slds-p-around_small slds-m-bottom_small"
+              >
+                <div class="slds-media">
+                  <div class="slds-media__figure">
+                    <lightning-icon
+                      icon-name="standard:contact"
+                      size="small"
+                    ></lightning-icon>
+                  </div>
+                  <div class="slds-media__body">
+                    <div class="slds-text-heading_small slds-truncate">
+                      <strong>{contact.Contact__r.Name}</strong>
+                    </div>
+                    <div
+                      class="slds-text-body_small slds-truncate"
+                      title={contact.Contact__r.Email}
+                    >
+                      {contact.Contact__r.Email}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slds-m-top_small">
+                  <lightning-button
+                    label="Remover Papel"
+                    variant="neutral"
+                    class="slds-size_1-of-1 slds-m-bottom_xx-small"
+                    onclick={handleRemoveRole}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                  <lightning-button
+                    label="Remover"
+                    variant="destructive-text"
+                    class="slds-size_1-of-1"
+                    onclick={handleDelete}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="4" padding="around-small">
+          <div class="slds-box slds-theme_shade">
+            <h2
+              class="slds-text-heading_medium slds-align_absolute-center slds-m-bottom_medium"
+            >
+              Financeiro 💰
+            </h2>
+            <template for:each={financialContacts} for:item="contact">
+              <div
+                key={contact.Id}
+                class="slds-card slds-p-around_small slds-m-bottom_small"
+              >
+                <div class="slds-media">
+                  <div class="slds-media__figure">
+                    <lightning-icon
+                      icon-name="standard:contact"
+                      size="small"
+                    ></lightning-icon>
+                  </div>
+                  <div class="slds-media__body">
+                    <div class="slds-text-heading_small slds-truncate">
+                      <strong>{contact.Contact__r.Name}</strong>
+                    </div>
+                    <div
+                      class="slds-text-body_small slds-truncate"
+                      title={contact.Contact__r.Email}
+                    >
+                      {contact.Contact__r.Email}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slds-m-top_small">
+                  <lightning-button
+                    label="Remover Papel"
+                    variant="neutral"
+                    class="slds-size_1-of-1 slds-m-bottom_xx-small"
+                    onclick={handleRemoveRole}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                  <lightning-button
+                    label="Remover"
+                    variant="destructive-text"
+                    class="slds-size_1-of-1"
+                    onclick={handleDelete}
+                    data-id={contact.Id}
+                  ></lightning-button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </lightning-layout-item>
+      </lightning-layout>
+    </div>
+  </lightning-card>
+</template>
