@@ -41,7 +41,10 @@
             <lightning-record-edit-form
               object-api-name="ContractRelationship__c"
               onsuccess={handleSuccess}
+              onerror={handleError}
             >
+              <lightning-messages></lightning-messages>
+
               <lightning-input-field
                 field-name="Contact__c"
               ></lightning-input-field>
@@ -50,6 +53,7 @@
                 value={recordId}
                 class="slds-hide"
               ></lightning-input-field>
+
               <div class="slds-m-top_medium slds-align_absolute-center">
                 <lightning-button
                   variant="brand"
@@ -102,7 +106,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="slds-m-top_small slds-grid slds-grid_align-spread">
                   <lightning-button
                     label="Comercial"
@@ -164,7 +167,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="slds-m-top_small">
                   <lightning-button
                     label="Remover Papel"
@@ -217,7 +219,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="slds-m-top_small">
                   <lightning-button
                     label="Remover Papel"
